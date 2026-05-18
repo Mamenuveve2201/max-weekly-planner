@@ -64,7 +64,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px
 <div class="mbg" id="mbg" onclick="closeBg(event)"><div class="modal"><div class="mttl" id="mttl">Add task</div><div id="mbd"></div><div class="macts" id="macts"></div></div></div>
 <div class="toast" id="toast"></div>
 <script>var SB="https://uvqjswdfcixwktgvnzbq.supabase.co";
-var AK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2cWpzd2RmY2l4d2t0Z3ZuemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE3MzIxOTgsImV4cCI6MjA1NzMwODE5OH0.gHcCDGVMfjUJaUgLBCCNJwOm0ukzD0LbdHFfcYEsqoI";
+var AK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2cWpzd2RmY2l4d2t0Z3ZuemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzNDExMzEsImV4cCI6MjA4NzkxNzEzMX0.SMB9fnxmLHFNTNkJk47UFpMqlccv_wvJOYAicvGxqoI";
 var UID="46ff1227-8bce-4138-9993-3b9f6f2508ef";
 var COL="max_todo_data";
 var SH=0,EH=24;
@@ -84,8 +84,8 @@ function fd(d){return d.toISOString().slice(0,10);}
 function today(){return fd(new Date());}
 function isToday(d){return fd(d)===today();}
 function setSS(s){document.getElementById("sd").className="sd"+(s==="ok"?" ok":s==="err"?" err":"");document.getElementById("sl").textContent=s==="ok"?"Synced":s==="err"?"Offline":"Syncing...";}
-function dbLoad(){setSS("syncing");fetch(SB+"/rest/v1/user_data?user_id=eq."+UID+"&select="+COL,{headers:{apikey:AK,Authorization:"Bearer "+AK}}).then(function(r){return r.json();}).then(function(rows){if(rows&&rows[0]&&rows[0][COL])tasks=rows[0][COL].tasks||[];setSS("ok");render();}).catch(function(){setSS("err");render();});}
-function dbSave(){var b={};b[COL]={tasks:tasks};fetch(SB+"/rest/v1/user_data?user_id=eq."+UID,{method:"PATCH",headers:{apikey:AK,Authorization:"Bearer "+AK,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify(b)}).then(function(r){setSS(r.ok?"ok":"err");}).catch(function(){setSS("err");});}
+function dbLoad(){setSS("syncing");fetch(SB+"/rest/v1/user_data?id=eq."+UID+"&select="+COL,{headers:{apikey:AK,Authorization:"Bearer "+AK}}).then(function(r){return r.json();}).then(function(rows){if(rows&&rows[0]&&rows[0].data&&rows[0].data[COL])tasks=rows[0].data[COL].tasks||[];setSS("ok");render();}).catch(function(){setSS("err");render();});}
+function dbSave(){var b={};b[COL]={tasks:tasks};fetch(SB+"/rest/v1/user_data?id=eq."+UID,{method:"PATCH",headers:{apikey:AK,Authorization:"Bearer "+AK,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({data:b})}).then(function(r){setSS(r.ok?"ok":"err");}).catch(function(){setSS("err");});}
 function syncAll(){dbLoad();}
 function prevW(){weekOff--;render();}function nextW(){weekOff++;render();}function goToday(){weekOff=0;render();}
 function render(){var dates=getWeek();renderLabel(dates);renderDayHeaders(dates);renderGrid(dates);renderUntimed(dates);requestAnimationFrame(renderNow);requestAnimationFrame(function(){renderFixed(dates);});}
